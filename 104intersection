@@ -1,0 +1,165 @@
+#!/usr/bin/python3
+
+import sys
+import math
+
+def main() :
+
+	try :
+
+		opt = sys.argv[1]
+		xp = sys.argv[2]
+		yp = sys.argv[3]
+		zp = sys.argv[4]
+		xv = sys.argv[5]
+		yv = sys.argv[6]
+		zv = sys.argv[7]
+		p = sys.argv[8]
+
+	except IndexError :
+
+		sys.exit(84)
+		return 84
+
+	try :
+
+		opt = int(sys.argv[1])
+		xp = int(sys.argv[2])
+		yp = int(sys.argv[3])
+		zp = int(sys.argv[4])
+		xv = int(sys.argv[5])
+		yv = int(sys.argv[6])
+		zv = int(sys.argv[7])
+		p = int(sys.argv[8])
+
+	except ValueError :
+
+		sys.exit(84)
+		return 84
+
+	if int(opt) == 1 :
+
+		print("sphere of radius",p)
+		a = math.pow(xv,2) + math.pow(yv,2) + math.pow(zv,2)
+		b = 2 * xp * xv + 2 * yp * yv + 2 * zp * zv
+		c = math.pow(xp,2) + math.pow(yp,2) + math.pow(zp,2) - math.pow(p,2) 
+
+		if a == 0 :
+
+			sys.exit(84)
+			return(84)
+
+	elif int(opt) == 2 :
+
+		print("cylinder of radius",p)
+		a = math.pow(xv,2) + math.pow(yv,2)
+		b = 2 * xp * xv + 2 * yp * yv
+		c = math.pow(xp,2) + math.pow(yp,2) - math.pow(p,2)
+
+		if a == 0 :
+
+			if zv == 0 :
+
+				sys.exit(84)
+				return(84)
+
+			else : 
+
+				if c == 0 : 
+	
+					print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+					print("There is an infinite number of intersection points.")
+					return 0
+
+				else :
+
+					print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+					print("No intersection point.")
+					return 0
+
+	elif int(opt) == 3 :
+
+		print("cone of",p, "degree angle")
+		p = math.radians(p)
+		a = math.pow(xv,2) + math.pow(yv,2) - math.pow((zv * math.tan(p)), 2)
+		b = 2 * xp * xv + 2 * yp * yv - 2 * zp * zv * math.pow(math.tan(p), 2)
+		c = math.pow(xp,2) + math.pow(yp,2) - math.pow(zp,2) * math.pow(math.tan(p),2)
+
+		if a == 0 :
+
+			if b == 0 :
+
+				if c == 0 :
+
+					print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+					print("There is an infinite number of intersection points.")
+					return 0
+
+				else :
+
+					print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+					print("No intersection point.")
+					return 0
+			
+			else :
+
+				lamda = -c / b
+				print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+				print("1 intersection point :")
+				xi = xp + lamda * xv
+				yi = yp + lamda * yv
+				zi = zp + lamda * zv
+				print("(%.3f"%xi,", %.3f"%yi,", %.3f"%zi,")",sep="")
+				return 0
+
+	else :
+
+		sys.exit(84)
+		return(84)
+
+	print("straight line going through the (",xp,",",yp,",",zp,") point and of direction vector (",xv,",",yv,",",zv,")", sep="")
+
+	delta = math.pow(b,2) - 4 * a * c
+
+	if delta < 0 :
+
+		print("No intersection point.")
+		return 0
+
+	if delta == 0 :
+
+		print("1 intersection point :")
+		lamda = -b/(2 * a)
+		xi = xp + lamda * xv
+		yi = yp + lamda * yv
+		zi = zp + lamda * zv
+		print("(%.3f"%xi,", %.3f"%yi,", %.3f"%zi,")",sep="")
+		return 0
+
+	if delta > 0 :
+
+		print("2 intersection points :")
+		lamda_one = ((-b - math.sqrt(delta))/(2 * a))
+		lamda_two = ((-b + math.sqrt(delta))/(2 * a))
+		xi_one = xp + lamda_one * xv
+		yi_one = yp + lamda_one * yv
+		zi_one = zp + lamda_one * zv
+		xi_two = xp + lamda_two * xv
+		yi_two = yp + lamda_two * yv
+		zi_two = zp + lamda_two * zv
+
+		if lamda_one > lamda_two :
+		
+			print("(%.3f"%xi_two,", %.3f"%yi_two,", %.3f"%zi_two,")",sep="")
+			print("(%.3f"%xi_one,", %.3f"%yi_one,", %.3f"%zi_one,")",sep="")
+		
+		else :
+				
+			print("(%.3f"%xi_one,", %.3f"%yi_one,", %.3f"%zi_one,")",sep="")
+			print("(%.3f"%xi_two,", %.3f"%yi_two,", %.3f"%zi_two,")",sep="")
+
+		return 0
+
+	return 0
+
+main()
