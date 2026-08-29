@@ -60,3 +60,27 @@ tangent point, `delta > 0` → two points, computed from the two roots and sorte
 handled separately — for the cylinder this reports either "No intersection point" or "infinite
 number of intersection points" depending on whether the line lies on the surface; for the cone,
 the `a == 0` branch additionally falls back to a linear (one-root) solution when `b != 0`.
+
+## Testing
+
+`test_104intersection.py` is a pytest suite that runs the script as a subprocess and covers the
+documented sphere/cylinder examples above, degenerate/boundary configurations (zero direction
+vector, zero radius, tangent lines, a line lying on the cylinder), and malformed input. Run it
+with:
+
+```
+python -m pytest test_104intersection.py -v
+```
+
+**Known issue (not fixed):** the cone (`opt=3`) branch's degenerate-case detection compares
+`a`, `b`, `c` to `0` with exact float equality, but those values are derived from
+`math.tan(math.radians(p))`. For a truly degenerate configuration (e.g. a line lying exactly on
+the cone's surface), the computed value is virtually never *exactly* `0.0` (e.g.
+`tan(radians(45))` is `0.9999999999999999`, not `1.0`) — so the intended "infinite number of
+intersection points" / linear-solution branches are skipped, and the code instead falls through
+to the generic quadratic formula with a near-zero `a`, producing a numerically unstable,
+nonsensical coordinate (observed: components on the order of `1e15`) instead of the correct
+answer. Fixing this properly requires replacing the exact `==` checks with a tolerance-based
+comparison for the cone branch specifically, which is a judgment call on the right epsilon and
+was left out of scope for this pass. It's covered by an `xfail` test
+(`test_cone_line_on_surface_reports_infinite_points`) rather than a silent fix.
